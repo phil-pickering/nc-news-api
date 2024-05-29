@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const e = require("express");
 
 beforeEach(() => {
   console.log("Seeding");
@@ -11,6 +12,19 @@ beforeEach(() => {
 
 afterAll(() => {
   return db.end();
+});
+
+describe("GET /api/notARoute", () => {
+  it("responds with a 404 status code", () => {
+    return request(app).get("/api/notARoute").expect(404);
+  });
+  it("returns the correct error message", () => {
+    return request(app)
+      .get("/api/notARoute")
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route does not exist");
+      });
+  });
 });
 
 describe("GET /api/topics", () => {
