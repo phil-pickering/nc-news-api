@@ -5,6 +5,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
+const { slice } = require("../db/data/test-data/articles");
 
 beforeEach(() => {
   console.log("Seeding");
@@ -50,6 +51,27 @@ describe("GET /api", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body).toMatchObject(endpoints);
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  it("responds with a 200 status code and returns an object with the correct number of properties and with the correct structure", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Object.keys(body.article).length).toBe(8);
+        expect(body.article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
       });
   });
 });
