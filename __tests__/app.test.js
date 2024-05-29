@@ -1,9 +1,10 @@
+// app.test.js
 const app = require("../app");
 const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
-const e = require("express");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   console.log("Seeding");
@@ -48,6 +49,19 @@ describe("GET /api/topics", () => {
             description: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("GET /api", () => {
+  it("responds with a 200 status code", () => {
+    return request(app).get("/api").expect(200);
+  });
+  it("returns an accurate JSON object", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body }) => {
+        expect(body).toMatchObject(endpoints);
       });
   });
 });
