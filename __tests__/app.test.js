@@ -16,12 +16,10 @@ afterAll(() => {
 });
 
 describe("GET /api/notARoute", () => {
-  it("responds with a 404 status code", () => {
-    return request(app).get("/api/notARoute").expect(404);
-  });
-  it("returns the correct error message", () => {
+  it("responds with a 404 status code and returns the correct error message", () => {
     return request(app)
       .get("/api/notARoute")
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route does not exist");
       });
@@ -29,20 +27,12 @@ describe("GET /api/notARoute", () => {
 });
 
 describe("GET /api/topics", () => {
-  it("responds with a 200 status code", () => {
-    return request(app).get("/api/topics").expect(200);
-  });
-  it("returns the correct number of results", () => {
+  it("responds with a 200 status code and returns the correct number of results, with each result having the correct structure", () => {
     return request(app)
       .get("/api/topics")
+      .expect(200)
       .then(({ body }) => {
         expect(body.topics).toHaveLength(3);
-      });
-  });
-  it("returns the correct structure for each result", () => {
-    return request(app)
-      .get("/api/topics")
-      .then(({ body }) => {
         body.topics.forEach((topic) => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
@@ -54,12 +44,10 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api", () => {
-  it("responds with a 200 status code", () => {
-    return request(app).get("/api").expect(200);
-  });
-  it("returns an accurate JSON object", () => {
+  it("responds with a 200 status code and an accurate JSON object", () => {
     return request(app)
       .get("/api")
+      .expect(200)
       .then(({ body }) => {
         expect(body).toMatchObject(endpoints);
       });
