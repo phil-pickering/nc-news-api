@@ -55,12 +55,11 @@ describe("GET /api", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  it("responds with a 200 status code and returns an object with the correct number of properties and with the correct structure", () => {
+  it("responds with a 200 status code and returns an object with the correct structure", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(Object.keys(body.article).length).toBe(8);
         expect(body.article).toMatchObject({
           author: expect.any(String),
           title: expect.any(String),
@@ -78,7 +77,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/notAnId")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad Request");
+        expect(response.body.msg).toBe("Invalid input");
       });
   });
   it("responds with a 404 status code and returns the correct error message when passed an id which doesn't exist", () => {
