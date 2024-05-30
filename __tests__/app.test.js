@@ -74,4 +74,22 @@ describe("GET /api/articles/:article_id", () => {
         });
       });
   });
+  it("responds with a 400 status code and returns the correct error message when passed an invalid id", () => {
+    return request(app)
+      .get("/api/articles/notAnId")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  it("responds with a 404 status code and returns the correct error message when passed an id which doesn't exist", () => {
+    return request(app)
+      .get("/api/articles/999999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "No article found for article_id: 999999"
+        );
+      });
+  });
 });
