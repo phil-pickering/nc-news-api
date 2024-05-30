@@ -10,25 +10,26 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles together with a count of all comments for each article, and sorted by most recent article; does not contain the actual body of any article",
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
+          "author": "grumpy19",
+          "title": "The Notorious MSG’s Unlikely Formula For Success",
+          "article_id": 34,
           "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
+          "created_at": "2020-11-22T11:13:00.000Z",
           "votes": 0,
-          "comment_count": 6
+          "article_img_url": "https://images.pexels.com/photos/2403392/pexels-photo-2403392.jpeg?w=700&h=700",
+          "comment_count": 11
         }
       ]
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves a single article object",
-    "queries": ["article_id"],
+    "description": "serves a single article object corresponding to the provided article_id",
+    "queries": [],
     "exampleResponse": {
       "article": {
         "article_id": 1,
