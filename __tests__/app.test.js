@@ -7,7 +7,6 @@ const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
-  console.log("Seeding");
   return seed(data);
 });
 
@@ -63,7 +62,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.article).toMatchObject({
           author: expect.any(String),
           title: expect.any(String),
-          article_id: expect.any(Number),
+          article_id: 1,
           body: expect.any(String),
           topic: expect.any(String),
           created_at: expect.any(String),
@@ -132,7 +131,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
             votes: expect.any(Number),
-            article_id: expect.any(Number),
+            article_id: 1,
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
@@ -154,8 +153,16 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe(
-          "No comments found for article_id: 999999"
+          "No article found for article_id: 999999"
         );
+      });
+  });
+  it("responds with a 200 status code and returns an empty array when passed an article_id which doesn't have any comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
       });
   });
 });
