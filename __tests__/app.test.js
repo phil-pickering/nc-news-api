@@ -72,7 +72,7 @@ describe("GET /api/articles/:article_id", () => {
         });
       });
   });
-  it("responds with a 400 status code and returns the correct error message when passed an invalid id", () => {
+  it("responds with a 400 status code and returns the correct error message when passed an invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId")
       .expect(400)
@@ -80,7 +80,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("Invalid input");
       });
   });
-  it("responds with a 404 status code and returns the correct error message when passed an id which doesn't exist", () => {
+  it("responds with a 404 status code and returns the correct error message when passed an article_id which doesn't exist", () => {
     return request(app)
       .get("/api/articles/999999")
       .expect(404)
@@ -114,6 +114,48 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(Number),
           });
         });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("responds with a 200 status code and returns an array with the correct number of objects, sorted by the most recent comment, and with each object having the correct structure", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(11);
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            article_id: expect.any(Number),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          });
+        });
+      });
+  });
+  it("responds with a 400 status code and returns the correct error message when passed an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/notAnId/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
+  });
+  it("responds with a 404 status code and returns the correct error message when passed an article_id which doesn't exist", () => {
+    return request(app)
+      .get("/api/articles/999999/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "No comments found for article_id: 999999"
+        );
       });
   });
 });
