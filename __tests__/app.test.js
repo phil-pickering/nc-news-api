@@ -166,3 +166,82 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  it("responds with a 201 status code and returns the correctly structured posted comment", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "This is a test comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 19,
+          body: "This is a test comment",
+          article_id: 1,
+          author: "butter_bridge",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("responds with a 404 status code and the correct error message when passed an article_id that doesn't exist", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "This is a test comment",
+    };
+    return request(app)
+      .post("/api/articles/999999/comments")
+      .send(comment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "No article found for article_id: 999999"
+        );
+      });
+  });
+  it("responds with a 400 status code and returns the correct error message when passed an invalid article_id", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "This is a test comment",
+    };
+    return request(app)
+      .post("/api/articles/notAnId/comments")
+      .send(comment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
+  });
+  it("responds with a 404 status code and returns the correct error message when passed a username that doesn't exist", () => {
+    const comment = {
+      username: "test_user",
+      body: "This is a test comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "No user found with the username: test_user"
+        );
+      });
+  });
+  it("responds with a 400 status code and returns the correct error message when passed an empty username or empty comment", () => {
+    const comment = {
+      username: "",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Username or comment can't be empty");
+      });
+  });
+});
