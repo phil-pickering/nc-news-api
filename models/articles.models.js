@@ -31,19 +31,67 @@ exports.selectAllArticles = () => {
 
 exports.selectAllCommentsByArticleId = (article_id) => {
   return db
-    .query(
-      `SELECT * FROM comments WHERE article_id = $1
-      ORDER BY created_at DESC`,
-      [article_id]
-    )
+    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then(({ rows }) => {
-      const comments = rows[0];
-      if (!comments) {
+      const article = rows[0];
+      if (article) {
+        return db
+          .query(
+            `SELECT * FROM comments WHERE article_id = $1
+            ORDER BY created_at DESC`,
+            [article_id]
+          )
+          .then(({ rows }) => {
+            return rows;
+          });
+      } else {
         return Promise.reject({
           status: 404,
-          msg: `No comments found for article_id: ${article_id}`,
+          msg: `No article found for article_id: ${article_id}`,
         });
       }
-      return rows;
+    });
+};
+
+exports.insertCommentByArticleId = (article_id, comment) => {
+  const { username, body } = comment;
+  if (!username || !body) {
+    return Promise.reject({
+      status: 400,
+      msg: `Username or comment can't be empty`,
+    });
+  }
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [username])
+    .then(({ rows }) => {
+      const user = rows[0];
+      if (user) {
+        return db
+          .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+          .then(({ rows }) => {
+            const article = rows[0];
+            if (article) {
+              return db
+                .query(
+                  `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3)
+                  RETURNING *`,
+                  [article_id, username, body]
+                )
+                .then(({ rows }) => {
+                  return rows[0];
+                });
+            } else {
+              return Promise.reject({
+                status: 404,
+                msg: `No article found for article_id: ${article_id}`,
+              });
+            }
+          });
+      } else {
+        return Promise.reject({
+          status: 404,
+          msg: `No user found with the username: ${username}`,
+        });
+      }
     });
 };
