@@ -333,3 +333,21 @@ describe("DELETE /api/comments/comment_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  it("responds with a 200 status code and returns the correct number of results, with each result having the correct structure", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            name: expect.any(String),
+            username: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});

@@ -17,9 +17,11 @@ const {
 } = require("./controllers/comments.controllers");
 
 const { getApiInfo } = require("./controllers/api.controllers");
+const { getAllUsers } = require("./controllers/users.controllers");
 const { getAllTopics } = require("./controllers/topics.controllers");
 
 app.get("/api", getApiInfo);
+app.get("/api/users", getAllUsers);
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
