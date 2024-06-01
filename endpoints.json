@@ -78,5 +78,28 @@
         }
       ]
     }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates an article corresponding to the provided article_id by increasing or decreasing the number of votes for the article",
+    "queries": [],
+    "exampleRequest": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "comment": [
+        {
+          "article": {
+            "article_id": 1,
+            "title": "Running a Node App",
+            "topic": "coding",
+            "author": "jessjelly",
+            "body": "Text from the article...",
+            "created_at": "2020-11-07T06:03:00.000Z",
+            "votes": 11,
+            "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700"
+          }
+        }
+      ]
+    }
   }
 }

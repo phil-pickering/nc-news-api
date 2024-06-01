@@ -95,3 +95,40 @@ exports.insertCommentByArticleId = (article_id, comment) => {
       }
     });
 };
+
+exports.updateArticleByArticleId = (article_id, inc_votes) => {
+  if (!inc_votes) {
+    return Promise.reject({
+      status: 400,
+      msg: `Votes cannot be blank`,
+    });
+  }
+  if (isNaN(inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: `Votes must be a number`,
+    });
+  }
+  return db
+    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+    .then(({ rows }) => {
+      const article = rows[0];
+      if (article) {
+        return db
+          .query(
+            `UPDATE articles SET votes = votes + $1
+            WHERE article_id = $2
+            RETURNING *`,
+            [inc_votes, article_id]
+          )
+          .then(({ rows }) => {
+            return rows[0];
+          });
+      } else {
+        return Promise.reject({
+          status: 404,
+          msg: `No article found for article_id: ${article_id}`,
+        });
+      }
+    });
+};
