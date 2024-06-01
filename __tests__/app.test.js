@@ -245,3 +245,67 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("responds with a 200 status code and returns the correctly structured updated article", () => {
+    const inc_votes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(inc_votes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 1,
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: 101,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  it("responds with a 404 status code and the correct error message when passed an article_id that doesn't exist", () => {
+    const inc_votes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/999999")
+      .send(inc_votes)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "No article found for article_id: 999999"
+        );
+      });
+  });
+  it("responds with a 400 status code and returns the correct error message when passed an invalid article_id", () => {
+    const inc_votes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/notAnId")
+      .send(inc_votes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
+  });
+  it("responds with a 400 status code and returns the correct error message when passed no votes", () => {
+    const inc_votes = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(inc_votes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Votes cannot be blank");
+      });
+  });
+  it("responds with a 400 status code and returns the correct error message when passed an invalid inc_votes", () => {
+    const inc_votes = { inc_votes: "notAVote" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(inc_votes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Votes must be a number");
+      });
+  });
+});
