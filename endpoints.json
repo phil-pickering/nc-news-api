@@ -101,5 +101,10 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:comments_id": {
+    "description": "deletes a comment corresponding to the provided comment_id",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
